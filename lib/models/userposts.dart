@@ -3,7 +3,7 @@ class Userposts {
   final String username;
   final String time;
   final String postcontent;
-  final String posting;
+  final String postimg;
   final String numcomments;
   final String numshare;
   bool isLiked;
@@ -13,7 +13,7 @@ class Userposts {
     required this.username,
     required this.time,
     required this.postcontent,
-    required this.posting,
+    required this.postimg,
     required this.numcomments,
     required this.numshare,
     required this.isLiked,
