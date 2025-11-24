@@ -126,7 +126,7 @@ class ProfileView extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor:Colors.grey),
               onPressed: (){},
-              icon: const Icon(Icons.thumb_up_rounded, size: 20,),
+              icon: const Icon(Icons.comment_rounded, size: 20,),
               label: const Text('Comment'),
             ),
             TextButton.icon(
