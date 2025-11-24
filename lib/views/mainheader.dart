@@ -20,7 +20,7 @@ class Mainheader extends StatelessWidget {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
-          ),
+          ), 
         ),
         Text(userdata.myUserAccount.email),
         const SizedBox(height: 20,),

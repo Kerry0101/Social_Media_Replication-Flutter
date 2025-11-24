@@ -125,7 +125,7 @@ class _PostlistState extends State<Postslist>{
       child: Column(
         children: widget.userdata.userList.map((userPost){
           return InkWell(
-            onTap: (){
+            onTap: (){  
               gotoPage(context, ProfileView(userPosts: userPost));
             },
             child: showPost(userPost),
