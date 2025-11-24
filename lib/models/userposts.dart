@@ -1,4 +1,5 @@
 class Userposts {
+  final String id;
   final String userimg;
   final String username;
   final String time;
@@ -9,6 +10,7 @@ class Userposts {
   bool isLiked;
 
   Userposts({
+    required this.id,
     required this.userimg,
     required this.username,
     required this.time,
