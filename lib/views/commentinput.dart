@@ -1,4 +1,3 @@
-// comment_input_widget.dart
 import 'package:flutter/material.dart';
 
 class Commentinput extends StatefulWidget {
@@ -6,10 +5,10 @@ class Commentinput extends StatefulWidget {
   final String userImg;
 
   const Commentinput({
-    Key? key,
+    super.key,
     required this.onCommentAdded,
     required this.userImg,
-  }) : super(key: key);
+  });
 
   @override
   _CommentinputState createState() => _CommentinputState();
@@ -46,8 +45,9 @@ class _CommentinputState extends State<Commentinput> {
           IconButton(
             icon: const Icon(Icons.send, color: Colors.blue),
             onPressed: () {
+              final commentText = _commentController.text.trim();
               if (_commentController.text.trim().isNotEmpty) {
-                widget.onCommentAdded(_commentController.text.trim());
+                 widget.onCommentAdded(commentText);
                 _commentController.clear();
               }
             },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_6/commentservice.dart';
 import 'package:flutter_application_6/views/profile.view.dart';
 import '../models/userdata.dart';
 import '../models/userposts.dart';
@@ -51,8 +52,7 @@ class _PostlistState extends State<Postslist>{
   Widget postCount (Userposts userPost) => Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      Text('${userPost.numcomments} Comments'),
-      const Text(''),
+      Text('${CommentService().getComments(userPost.id).length} Comments'),
       const SizedBox(width: 20,),
       Text('${userPost.numshare} Shares'),
     ],

@@ -7,7 +7,7 @@ class Userdata {
   List<Userposts> userList = [
     
     Userposts(
-      id: '',
+      id: 'post1',
       userimg: 'assets/my_pfp_picture.png',
       username: 'Kerry Potter',
       time: '2 hrs ago',
@@ -19,7 +19,7 @@ class Userdata {
     ),
 
     Userposts(
-      id: '',
+      id: 'post2',
       userimg: 'assets/iane.png',
       username: 'Iane0143',
       time: '4 hrs ago',
@@ -31,7 +31,7 @@ class Userdata {
     ),
 
     Userposts(
-      id: '',
+      id: 'post3',
       userimg: 'assets/Rexar.png',
       username: 'Rexar Kamimura',
       time: '6 hrs ago',
@@ -43,7 +43,7 @@ class Userdata {
     ),
 
     Userposts(
-      id: '',
+      id: 'post4',
       userimg: 'assets/DavidWebb.png',
       username: 'Jason Bourne',
       time: '12 hrs ago',
