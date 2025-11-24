@@ -122,8 +122,7 @@ class _PostlistState extends State<Postslist>{
   Widget build(BuildContext context){
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: ListView(
-        shrinkWrap: true,
+      child: Column(
         children: widget.userdata.userList.map((userPost){
           return InkWell(
             onTap: (){
