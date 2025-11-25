@@ -18,11 +18,11 @@ class _ProfileViewState extends State<ProfileView> {
   final Userdata userData = Userdata();
   final CommentService commentService = CommentService();
   late List<Usercomments> commentsList;
+  bool _isLoading = true;
 
-
-  var nametxtStyle = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  var boldtxtStyle = const TextStyle(fontWeight: FontWeight.bold);
-  var boldtxtStyle1 = const TextStyle(
+  final nametxtStyle = const TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  final boldtxtStyle = const TextStyle(fontWeight: FontWeight.bold);
+  final boldtxtStyle1 = const TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 16,
   );
@@ -30,33 +30,44 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
-        commentsList = commentService.getComments(widget.userPosts.id);
-    if (commentsList.isEmpty) {
-      
-      commentsList = List<Usercomments>.from(userData.commentsList);
-      
-          for (var comment in commentsList) {
-            commentService.addComment(widget.userPosts.id, comment);
-      }
+    _loadComments();
+  }
+
+
+  Future<void> _loadComments() async {
+    try {
+      final comments = await commentService.getComments(widget.userPosts.id);
+      setState(() {
+        commentsList = comments;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        commentsList = List<Usercomments>.from(userData.commentsList);
+        _isLoading = false;
+      });
     }
   }
 
-    void addComment(String text) {
+  Future<void> addComment(String text) async {
     if (text.trim().isEmpty) return;
-    
+
     final newComment = Usercomments(
-      commenterName: userData.myUserAccount.name, // Use actual user name
+      commenterName: userData.myUserAccount.name,
       commenterContent: text,
-      commenterImg: userData.myUserAccount.img, // Use actual user image
-      commenterTime: 'Now',
+      commenterImg: userData.myUserAccount.img,
+      commenterTime: 'Just now',
     );
 
-    setState(() {
-      commentsList.add(newComment);
-      commentService.addComment(widget.userPosts.id, newComment);
-    });
+    try {
+      await commentService.addComment(widget.userPosts.id, newComment);
+      setState(() {
+        commentsList.add(newComment);
+      });
+    } catch (e) {
+      // Optionally handle error
+    }
   }
-
 
   Widget commentBtn(Usercomments userComment) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -104,57 +115,57 @@ class _ProfileViewState extends State<ProfileView> {
       );
 
   Widget userCommenterline(Usercomments userComments) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      commenterPic(userComments),
-      Expanded( 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            commentSpace(userComments),
-            commentBtn(userComments)
-          ],
-        ),
-      ),
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          commenterPic(userComments),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                commentSpace(userComments),
+                commentBtn(userComments)
+              ],
+            ),
+          ),
+        ],
+      );
 
   Widget userPostDetails(Usercomments userComments) => Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      const SizedBox(height: 15),
-      userCommenterline(userComments),
-    ],
-  );
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox(height: 15),
+          userCommenterline(userComments),
+        ],
+      );
 
   Widget commenter() => Column(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      const Divider(color: Colors.grey),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: [
-            Text('${commentsList.length} Comments', style: boldtxtStyle),
-            const Spacer(),
-            Text('${widget.userPosts.numshare} Shares', style: boldtxtStyle),
-          ],
-        ),
-      ),
-      const SizedBox(height: 15),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: [
-            Text('All comments', style: boldtxtStyle1),
-            const Icon(Icons.arrow_drop_down_rounded),
-          ],
-        ),
-      ),
-    ],
-  );
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Divider(color: Colors.grey),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Text('${commentsList.length} Comments', style: boldtxtStyle),
+                const Spacer(),
+                Text('${widget.userPosts.numshare} Shares', style: boldtxtStyle),
+              ],
+            ),
+          ),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Text('All comments', style: boldtxtStyle1),
+                const Icon(Icons.arrow_drop_down_rounded),
+              ],
+            ),
+          ),
+        ],
+      );
 
   Widget buttons(Userposts userPost) => Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -249,7 +260,7 @@ class _ProfileViewState extends State<ProfileView> {
         ),
       );
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -266,19 +277,20 @@ class _ProfileViewState extends State<ProfileView> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                userline(widget.userPosts),
-                postimage(widget.userPosts),
-                buttons(widget.userPosts),
-                commenter(),
-                ...commentsList.map((userComment) => userPostDetails(userComment)),
-                const SizedBox(height: 20), // Add some bottom padding
-              ],
-            ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      userline(widget.userPosts),
+                      postimage(widget.userPosts),
+                      buttons(widget.userPosts),
+                      commenter(),
+                      ...commentsList.map((userComment) => userPostDetails(userComment)),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
           ),
-          // Add comment input at the bottom
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Commentinput(
@@ -291,3 +303,4 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 }
+

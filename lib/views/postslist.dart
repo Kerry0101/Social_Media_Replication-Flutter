@@ -4,6 +4,57 @@ import 'package:flutter_application_6/views/profile.view.dart';
 import '../models/userdata.dart';
 import '../models/userposts.dart';
 
+
+class _PostCountWidget extends StatefulWidget {
+  final Userposts userPost;
+  
+  const _PostCountWidget({required this.userPost});
+  
+  @override
+  State<_PostCountWidget> createState() => _PostCountWidgetState();
+}
+
+class _PostCountWidgetState extends State<_PostCountWidget> {
+  int commentCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCommentCount();
+  }
+
+    Future<void> _loadCommentCount() async {
+    try {
+      final comments = await CommentService().getComments(widget.userPost.id);
+      setState(() {
+        commentCount = comments.length;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        commentCount = 0;
+        _isLoading = false;
+      });
+    }
+  }
+
+    @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        _isLoading 
+            ? const Text('Loading...')
+            : Text('$commentCount Comments'),
+        const SizedBox(width: 20),
+        Text('${widget.userPost.numshare} Shares'),
+      ],
+    );
+  }
+}
+
+
 class Postslist extends StatefulWidget {
   const Postslist({super.key, required this.userdata});
 
@@ -49,14 +100,7 @@ class _PostlistState extends State<Postslist>{
     ],
   );
 
-  Widget postCount (Userposts userPost) => Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      Text('${CommentService().getComments(userPost.id).length} Comments'),
-      const SizedBox(width: 20,),
-      Text('${userPost.numshare} Shares'),
-    ],
-  );
+  Widget postCount(Userposts userPost) => _PostCountWidget(userPost: userPost);
 
   Widget postImage (Userposts userPost) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
